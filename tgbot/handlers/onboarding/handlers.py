@@ -23,34 +23,31 @@ days_keyboard = [
         InlineKeyboardButton("March", callback_data="00"),
     ],
     [
-        InlineKeyboardButton("10", callback_data='10'),
-        InlineKeyboardButton("11", callback_data='11'),
-        InlineKeyboardButton("12", callback_data='12'),
-        InlineKeyboardButton("13", callback_data='13'),
-        InlineKeyboardButton("14", callback_data='14'),
-        InlineKeyboardButton("15", callback_data='15'),
-        InlineKeyboardButton("16", callback_data='16'),
-        InlineKeyboardButton("17", callback_data='17'),
-
+        InlineKeyboardButton("11", callback_data='2024-03-11'),
+        InlineKeyboardButton("12", callback_data='2024-03-12'),
+        InlineKeyboardButton("13", callback_data='2024-03-13'),
+        InlineKeyboardButton("14", callback_data='2024-03-14'),
+        InlineKeyboardButton("15", callback_data='2024-03-15'),
+        InlineKeyboardButton("16", callback_data='2024-03-16'),
+        InlineKeyboardButton("17", callback_data='2024-03-17'),
     ],
     [
-        InlineKeyboardButton("18", callback_data='18'),
-        InlineKeyboardButton("19", callback_data='19'),
-        InlineKeyboardButton("20", callback_data='20'),
-        InlineKeyboardButton("21", callback_data='21'),
-        InlineKeyboardButton("22", callback_data='22'),
-        InlineKeyboardButton("23", callback_data='23'),
-        InlineKeyboardButton("24", callback_data='24'),
-        InlineKeyboardButton("25", callback_data='25'),
-
+        InlineKeyboardButton("18", callback_data='2024-03-18'),
+        InlineKeyboardButton("19", callback_data='2024-03-19'),
+        InlineKeyboardButton("20", callback_data='2024-03-20'),
+        InlineKeyboardButton("21", callback_data='2024-03-21'),
+        InlineKeyboardButton("22", callback_data='2024-03-22'),
+        InlineKeyboardButton("23", callback_data='2024-03-23'),
+        InlineKeyboardButton("24", callback_data='2024-03-24'),
+        InlineKeyboardButton("25", callback_data='2024-03-25'),
     ],
     [
-        InlineKeyboardButton("26", callback_data='26'),
-        InlineKeyboardButton("27", callback_data='27'),
-        InlineKeyboardButton("28", callback_data='28'),
-        InlineKeyboardButton("29", callback_data='29'),
-        InlineKeyboardButton("*", callback_data='00'),
-        InlineKeyboardButton("*", callback_data='00'),
+        InlineKeyboardButton("26", callback_data='2024-03-26'),
+        InlineKeyboardButton("27", callback_data='2024-03-27'),
+        InlineKeyboardButton("28", callback_data='2024-03-28'),
+        InlineKeyboardButton("29", callback_data='2024-03-29'),
+        InlineKeyboardButton("30", callback_data='2024-03-30'),
+        InlineKeyboardButton("31", callback_data='2024-03-31'),
         InlineKeyboardButton("*", callback_data='00'),
         InlineKeyboardButton("*", callback_data='00'),
     ],
@@ -58,48 +55,52 @@ days_keyboard = [
         InlineKeyboardButton("April", callback_data="00"),
     ],
     [
-        InlineKeyboardButton("1", callback_data='30'),
-        InlineKeyboardButton("2", callback_data='31'),
-        InlineKeyboardButton("3", callback_data='32'),
-        InlineKeyboardButton("4", callback_data='33'),
-        InlineKeyboardButton("5", callback_data='34'),
-        InlineKeyboardButton("6", callback_data='35'),
-        InlineKeyboardButton("7", callback_data='36'),
-        InlineKeyboardButton("8", callback_data='37'),
+        InlineKeyboardButton("1", callback_data='2024-04-01'),
+        InlineKeyboardButton("2", callback_data='2024-04-02'),
+        InlineKeyboardButton("3", callback_data='2024-04-03'),
+        InlineKeyboardButton("4", callback_data='2024-04-04'),
+        InlineKeyboardButton("5", callback_data='2024-04-05'),
+        InlineKeyboardButton("6", callback_data='2024-04-06'),
+        InlineKeyboardButton("7", callback_data='2024-04-07'),
+        InlineKeyboardButton("8", callback_data='2024-04-08'),
     ],
     [
-        InlineKeyboardButton("✅ Tasdiqlash", callback_data="confirm"),
+        InlineKeyboardButton("9", callback_data='2024-04-09'),
+        InlineKeyboardButton("✅ Confirm", callback_data="confirm"),
     ],
 ]
+
 numbers_in_emoji = {
-    "10": "1️⃣0️⃣ - mart",
-    "11": "1️⃣1️⃣ - mart",
-    "12": "1️⃣2️⃣ - mart",
-    "13": "1️⃣3️⃣ - mart",
-    "14": "1️⃣4️⃣ - mart",
-    "15": "1️⃣5️⃣ - mart",
-    "16": "1️⃣6️⃣ - mart",
-    "17": "1️⃣7️⃣ - mart",
-    "18": "1️⃣8️⃣ - mart",
-    "19": "1️⃣9️⃣ - mart",
-    "20": "2️⃣0️⃣ - mart",
-    "21": "2️⃣1️⃣ - mart",
-    "22": "2️⃣2️⃣ - mart",
-    "23": "2️⃣3️⃣ - mart",
-    "24": "2️⃣4️⃣ - mart",
-    "25": "2️⃣5️⃣ - mart",
-    "26": "2️⃣6️⃣ - mart",
-    "27": "2️⃣7️⃣ - mart",
-    "28": "2️⃣8️⃣ - mart",
-    "29": "2️⃣9️⃣ - mart",
-    "30": "1️⃣ - aprel",
-    "31": "2️⃣ - aprel",
-    "32": "3️⃣ - aprel",
-    "33": "4️⃣ - aprel",
-    "34": "5️⃣ - aprel",
-    "35": "6️⃣ - aprel",
-    "36": "7️⃣ - aprel",
-    "37": "8️⃣ - aprel",
+    "2024-03-11": "1️⃣1️⃣ - March",
+    "2024-03-12": "1️⃣2️⃣ - March",
+    "2024-03-13": "1️⃣3️⃣ - March",
+    "2024-03-14": "1️⃣4️⃣ - March",
+    "2024-03-15": "1️⃣5️⃣ - March",
+    "2024-03-16": "1️⃣6️⃣ - March",
+    "2024-03-17": "1️⃣7️⃣ - March",
+    "2024-03-18": "1️⃣8️⃣ - March",
+    "2024-03-19": "1️⃣9️⃣ - March",
+    "2024-03-20": "2️⃣0️⃣ - March",
+    "2024-03-21": "2️⃣1️⃣ - March",
+    "2024-03-22": "2️⃣2️⃣ - March",
+    "2024-03-23": "2️⃣3️⃣ - March",
+    "2024-03-24": "2️⃣4️⃣ - March",
+    "2024-03-25": "2️⃣5️⃣ - March",
+    "2024-03-26": "2️⃣6️⃣ - March",
+    "2024-03-27": "2️⃣7️⃣ - March",
+    "2024-03-28": "2️⃣8️⃣ - March",
+    "2024-03-29": "2️⃣9️⃣ - March",
+    "2024-03-30": "3️⃣0️⃣ - March",
+    "2024-03-31": "3️⃣1️⃣ - March",
+    "2024-04-01": "1️⃣ - April",
+    "2024-04-02": "2️⃣ - April",
+    "2024-04-03": "3️⃣ - April",
+    "2024-04-04": "4️⃣ - April",
+    "2024-04-05": "5️⃣ - April",
+    "2024-04-06": "6️⃣ - April",
+    "2024-04-07": "7️⃣ - April",
+    "2024-04-08": "8️⃣ - April",
+    "2024-04-09": "9️⃣ - April",
 }
 
 
@@ -114,9 +115,9 @@ def command_start(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text(
         text +
-        f"\nKontaktni yuboring.",
+        f"\nSend your phone number",
         reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton("Telefon raqamni yuborish", request_contact=True)]]
+            [[KeyboardButton("Share your phone number", request_contact=True)]]
         ))
 
     return RAMADANDAYS
@@ -130,47 +131,66 @@ def ramadan_days(update: Update, context: CallbackContext) -> int:
     reply_markup = InlineKeyboardMarkup(days_keyboard)
 
     update.message.reply_text(
-        'Ramazonning qaysi kunlarida qatnashmoqchisiz ?\n\n',
+        'Which days you want to attend for Iftar?\n\n',
         # reply_markup=reply_markup,
         reply_markup=ReplyKeyboardRemove()
     )
     update.message.reply_text(
-        'Kunlarni belgilang ?\n\n',
+        'Select days ?\n\n',
         reply_markup=reply_markup,
     )
 
     return CHOOSE_PAYMENT
 
+def escape_markdown_v2(text):
+    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in escape_chars:
+        if char in text:
+            text = text.replace(char, "\\" + char)
+    return text
+
+bank_account_details = """
+Bank Name: <strong>Keb Hana Bank(하나은행)</strong>
+Account Name: <b>Mukammadaliev Bekhzodbek</b>
+Account Number: <code>74891124393407</code>.
+
+Please send the screenshot of the payment you made through online banking.
+"""
+bank_details = escape_markdown_v2(bank_account_details)
 
 def choose_payment(update: Update, context: CallbackContext) -> int:
     """Stores the photo and asks for a location."""
     text = update.message.text
-    if text == "Naqd":
+    if text == "Cash":
         update.message.reply_text(
-            f'Naqd to`lash so`rovingiz qabul qilindi. Tashakkur ).',
+            f'You have selected to pay cash, you can give cash to our admins listed on bot info ).',
         )
         context.user_data["payment_type"] = "cash"
         user_id = user_id = update.message.from_user.id
         save_data(user_id, context, image=False)
     elif text == "Card":
+
         update.message.reply_text(
-            'Iltimos to`lov chekini rasm ko`rinishida yuboring.'
+            bank_account_details,
+            parse_mode='HTML',
+            disable_web_page_preview=True
         )
         context.user_data["payment_type"] = "card"
 
+
         return ACCEPT_CHECK
 
-    elif text == "Ortga":
+    elif text == "Back":
         reply_markup = InlineKeyboardMarkup(days_keyboard)
         days_text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
 
         update.message.reply_text(
-            'Ramazonning qaysi kunlarida qatnashmoqchisiz ?\n\n',
+            'Which days you want to attend for Iftar ?\n\n',
             # reply_markup=reply_markup,
             reply_markup=ReplyKeyboardRemove()
         )
         update.message.reply_text(
-            'Belgilangan kunlar:\n\n' + days_text,
+            'Selected days:\n\n' + days_text,
             reply_markup=reply_markup,
         )
 
@@ -189,7 +209,7 @@ def accept_check(update: Update, context: CallbackContext) -> int:
     save_data(user_id, context, image=True)
 
     update.message.reply_text(
-        'Qabul uchun so`rov yuborildi, tashakkur.'
+        'Your request has been received. Thank you!',
     )
 
     return ConversationHandler.END
@@ -208,7 +228,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
 
 def button_click(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    option_text = "✅ Belgilangan kunlar ?\n\n"
+    option_text = "✅ Selected days\n\n"
     selected_option = query.data
     reply_markup = InlineKeyboardMarkup(days_keyboard)
 
@@ -218,11 +238,11 @@ def button_click(update: Update, context: CallbackContext) -> None:
         else:
             days = len(context.user_data["days"])
             summa = days * 7000
-            keyboard = [['Naqd', 'Card'], ['Ortga']]
+            keyboard = [['Cash', 'Card'], ['Ortga']]
             reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
             query.message.reply_text(
-                f'{days} kun! Jami to`lov {summa} so`m.',
+                f'{days} days! Total {summa} won.',
                 reply_markup=reply_markup
             )
 

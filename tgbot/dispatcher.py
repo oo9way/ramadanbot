@@ -24,7 +24,7 @@ def setup_dispatcher(dp):
         entry_points=[CommandHandler('start', onboarding_handlers.command_start)],
         states={
             RAMADANDAYS: [MessageHandler(Filters.contact, onboarding_handlers.ramadan_days)],
-            CHOOSE_PAYMENT: [MessageHandler(Filters.regex('^(Naqd|Card|Ortga)$'), onboarding_handlers.choose_payment)],
+            CHOOSE_PAYMENT: [MessageHandler(Filters.regex('^(Cash|Card|Back)$'), onboarding_handlers.choose_payment)],
             ACCEPT_CHECK: [MessageHandler(Filters.photo, onboarding_handlers.accept_check)],
         },
         fallbacks=[CommandHandler('cancel', onboarding_handlers.cancel)],

@@ -74,12 +74,16 @@ class User(CreateUpdateTracker):
         return f"{self.first_name} {self.last_name}" if self.last_name else f"{self.first_name}"
 
 
-class Location(CreateTracker):
+class Application(models.Model):
+    PAYMENT_CHOICES = (
+        ("cash", "Cash"),
+        ("card", "Card")
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-
-    objects = GetOrNoneManager()
-
-    def __str__(self):
-        return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+    days = models.CharField(max_length=255, null=True, blank=True)
+    phone = models.CharField(max_length=255, null=True, blank=True)
+    payment_type = models.CharField(max_length=255, choices=PAYMENT_CHOICES, default="cash")
+    payment_check = models.ImageField(null=True, blank=True)
+    is_approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

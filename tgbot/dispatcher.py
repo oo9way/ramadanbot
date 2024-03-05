@@ -4,17 +4,15 @@
 from telegram.ext import (
     Dispatcher, Filters,
     CommandHandler, MessageHandler,
-    ConversationHandler
+    ConversationHandler, CallbackQueryHandler
 )
 
 from dtb.settings import DEBUG
-from tgbot.handlers.onboarding.handlers import PAYMENT, CHOOSE_PAYMENT, ACCEPT_CHECK, RAMADANDAYS
+from tgbot.handlers.onboarding.handlers import CHOOSE_PAYMENT, ACCEPT_CHECK, RAMADANDAYS, button_click
 
-from tgbot.handlers.utils import files, error
+from tgbot.handlers.utils import error
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.main import bot
-
-
 
 
 def setup_dispatcher(dp):
@@ -26,12 +24,14 @@ def setup_dispatcher(dp):
         entry_points=[CommandHandler('start', onboarding_handlers.command_start)],
         states={
             RAMADANDAYS: [MessageHandler(Filters.contact, onboarding_handlers.ramadan_days)],
-            PAYMENT: [MessageHandler(Filters.regex('^(?:[1-9]|[1-2][0-9])-(?:[2-9]|1\d|30)$'), onboarding_handlers.payment)],
-            CHOOSE_PAYMENT: [MessageHandler(Filters.regex('^(Naqd|Card)$'), onboarding_handlers.choose_payment)],
+            CHOOSE_PAYMENT: [MessageHandler(Filters.regex('^(Naqd|Card|Ortga)$'), onboarding_handlers.choose_payment)],
             ACCEPT_CHECK: [MessageHandler(Filters.photo, onboarding_handlers.accept_check)],
         },
         fallbacks=[CommandHandler('cancel', onboarding_handlers.cancel)],
     ))
+
+    dp.add_handler(CallbackQueryHandler(button_click))
+
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
     return dp
 

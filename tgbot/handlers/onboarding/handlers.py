@@ -1,13 +1,18 @@
-import datetime
-
-from django.utils import timezone
-from telegram import ParseMode, Update
-from telegram.ext import CallbackContext
+from telegram import  Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
+from telegram.ext import CallbackContext, ConversationHandler
 
 from tgbot.handlers.onboarding import static_text
-from tgbot.handlers.utils.info import extract_user_data_from_update
 from users.models import User
-from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
+import logging
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
+
+RAMADANDAYS, PAYMENT, LOCATION, ACCEPT_CHECK, CHOOSE_PAYMENT, CASH, CARD = range(7)
 
 
 def command_start(update: Update, context: CallbackContext) -> None:
@@ -18,22 +23,77 @@ def command_start(update: Update, context: CallbackContext) -> None:
     else:
         text = static_text.start_not_created.format(first_name=u.first_name)
 
-    update.message.reply_text(text=text,
-                              reply_markup=make_keyboard_for_start_command())
+    update.message.reply_text(
+        text +
+        f"\nKontaktni yuboring.",
+        reply_markup=ReplyKeyboardMarkup(
+            [[KeyboardButton("Telefon raqamni yuborish", request_contact=True)]]
+        ))
+
+    return RAMADANDAYS
 
 
-def secret_level(update: Update, context: CallbackContext) -> None:
-    # callback_data: SECRET_LEVEL_BUTTON variable from manage_data.py
-    """ Pressed 'secret_level_button_text' after /start command"""
-    user_id = extract_user_data_from_update(update)['user_id']
-    text = static_text.unlock_secret_room.format(
-        user_count=User.objects.count(),
-        active_24=User.objects.filter(updated_at__gte=timezone.now() - datetime.timedelta(hours=24)).count()
+def ramadan_days(update: Update, context: CallbackContext) -> int:
+    """Stores the selected gender and asks for a photo."""
+    user = update.message.from_user
+    logger.info("Ramadan days %s: %s", user.first_name, update.message.text)
+    update.message.reply_text(
+        'Ramazonning qaysi kunlarida qatnashmoqchisiz ?, '
+        'Ushbu formatda yuboring, 10-20 yoki 1-15, yoki 1-30 (Boshlash kuni-Tugash kuni)',
+        reply_markup=ReplyKeyboardRemove(),
     )
 
-    context.bot.edit_message_text(
-        text=text,
-        chat_id=user_id,
-        message_id=update.callback_query.message.message_id,
-        parse_mode=ParseMode.HTML
+    return PAYMENT
+
+
+def payment(update: Update, context: CallbackContext) -> int:
+    """Stores the photo and asks for a location."""
+    text = update.message.text.split("-")
+    days = (int(text[1]) - int(text[0]) + 1)
+    summa = days * 7000
+    keyboard = [['Naqd', 'Card']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+    update.message.reply_text(
+        f'{days} kun! Jami to`lov {summa} so`m.',
+        reply_markup=reply_markup
     )
+
+    return CHOOSE_PAYMENT
+
+
+def choose_payment(update: Update, context: CallbackContext) -> int:
+    """Stores the photo and asks for a location."""
+    text = update.message.text
+    if text == "Naqd":
+        update.message.reply_text(
+            f'Naqd to`lash so`rovingiz qabul qilindi. Tashakkur ).',
+        )
+    elif text == "Card":
+        update.message.reply_text(
+            'Iltimos to`lov chekini rasm ko`rinishida yuboring.'
+        )
+
+        return ACCEPT_CHECK
+
+    return ConversationHandler.END
+
+
+def accept_check(update: Update, context: CallbackContext) -> int:
+    """Skips the photo and asks for a location."""
+    update.message.reply_text(
+        'Qabul uchun so`rov yuborildi, tashakkur.'
+    )
+
+    return ConversationHandler.END
+
+
+def cancel(update: Update, context: CallbackContext) -> int:
+    """Cancels and ends the conversation."""
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove()
+    )
+
+    return ConversationHandler.END

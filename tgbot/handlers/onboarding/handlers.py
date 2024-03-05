@@ -238,7 +238,7 @@ def button_click(update: Update, context: CallbackContext) -> None:
         else:
             days = len(context.user_data["days"])
             summa = days * 7000
-            keyboard = [['Cash', 'Card'], ['Ortga']]
+            keyboard = [['Cash', 'Card'], ['Back']]
             reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
             query.message.reply_text(

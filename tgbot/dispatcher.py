@@ -8,7 +8,8 @@ from telegram.ext import (
 )
 
 from dtb.settings import DEBUG
-from tgbot.handlers.onboarding.handlers import CHOOSE_PAYMENT, ACCEPT_CHECK, RAMADANDAYS, button_click, WAITING_FOR_IMAGE,  request_image_again,accept_check
+from tgbot.handlers.onboarding.handlers import CHOOSE_PAYMENT, ACCEPT_CHECK, RAMADANDAYS, button_click, \
+    WAITING_FOR_IMAGE, request_image_again, accept_check, CHOOSE_ORDER_TYPE, PHONE2
 
 from tgbot.handlers.utils import error
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
@@ -24,6 +25,10 @@ def setup_dispatcher(dp):
         entry_points=[CommandHandler('start', onboarding_handlers.command_start)],
         states={
             RAMADANDAYS: [MessageHandler(Filters.contact, onboarding_handlers.ramadan_days)],
+            PHONE2: [
+                MessageHandler(Filters.regex('^(Skip|[-+]?[0-9]+)$'), onboarding_handlers.phone_second)],
+
+            CHOOSE_ORDER_TYPE: [MessageHandler(Filters.regex('^(Onsite|Take away|Back)$'), onboarding_handlers.choose_order_type)],
             CHOOSE_PAYMENT: [MessageHandler(Filters.regex('^(Cash|Card|Back)$'), onboarding_handlers.choose_payment)],
             WAITING_FOR_IMAGE: [
             MessageHandler(Filters.photo, accept_check),

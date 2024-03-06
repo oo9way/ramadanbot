@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from dtb.settings import DEBUG
 
-from users.models import User, Application
+from users.models import User, Application, Day
 from users.forms import BroadcastForm
 
 from users.tasks import broadcast_message
@@ -50,8 +50,21 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ("user", "phone", "days", "payment_type", "is_approved", "payment_check", "created_at", )
+    list_display = ("user", "phone", "get_days_count", "payment_type", "is_approved", "payment_check", "created_at", )
     list_display_links = ("user",)
     list_filter = ("payment_type",)
     search_fields = ("user",)
     ordering = ("is_approved", )
+    readonly_fields = ("user", "phone", "payment_type", "payment_check", "days", "phone2", "order_type", )
+
+
+@admin.register(Day)
+class DayAdmin(admin.ModelAdmin):
+    list_display = ("day", "get_count", "get_users")
+    ordering = ("day", )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

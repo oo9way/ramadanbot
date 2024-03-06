@@ -32,7 +32,7 @@ class User(CreateUpdateTracker):
     admins = AdminUserManager()  # User.admins.all()
 
     def __str__(self):
-        return f'@{self.username}' if self.username is not None else f'{self.user_id}'
+        return f'{self.first_name} {self.last_name}'
 
     @classmethod
     def get_user_and_created(cls, update: Update, context: CallbackContext) -> Tuple[User, bool]:
@@ -82,10 +82,36 @@ class Application(models.Model):
         ("card", "Card")
     )
 
+    ORDER_TYPE_CHOICES = (
+        ("onsite", "Onsite"),
+        ("takeaway", "Take away")
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     days = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
+    phone2 = models.CharField(max_length=255, null=True, blank=True)
     payment_type = models.CharField(max_length=255, choices=PAYMENT_CHOICES, default="cash")
+    order_type = models.CharField(max_length=255, choices=ORDER_TYPE_CHOICES, default="onsite")
     payment_check = models.ImageField(null=True, blank=True)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def get_days_count(self) -> int:
+        days = set(x.strip() for x in self.days.replace("}", "").replace("{", "").replace("'", "").split(","))
+        return len(days)
+
+
+class Day(models.Model):
+    day = models.DateField(unique_for_date=True)
+    users = models.ManyToManyField(User)
+
+    @property
+    def get_count(self):
+        return self.users.count()
+
+
+    @property
+    def get_users(self):
+        return ', '.join(user.first_name for user in self.users.all())

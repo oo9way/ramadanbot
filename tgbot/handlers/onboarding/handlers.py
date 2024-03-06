@@ -6,9 +6,10 @@ from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardB
 from telegram.ext import CallbackContext, ConversationHandler
 
 from tgbot.handlers.onboarding import static_text
-from users.models import User, Application
+from users.models import User, Application, Day
 import logging
 from datetime import datetime
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -16,11 +17,12 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-RAMADANDAYS, PAYMENT, LOCATION, ACCEPT_CHECK, CHOOSE_PAYMENT, CASH, CARD = range(7)
+RAMADANDAYS, PAYMENT, CHOOSE_DAYS, PHONE2, LOCATION, ACCEPT_CHECK, CHOOSE_PAYMENT, CASH, CARD, CHOOSE_ORDER_TYPE = range(
+    10)
 WAITING_FOR_IMAGE = 8
 days_keyboard = [
     [
-        InlineKeyboardButton("March", callback_data="00"),
+        InlineKeyboardButton("March", callback_data="march"),
     ],
     [
         InlineKeyboardButton("11", callback_data='2024-03-11'),
@@ -52,7 +54,7 @@ days_keyboard = [
         InlineKeyboardButton("*", callback_data='00'),
     ],
     [
-        InlineKeyboardButton("April", callback_data="00"),
+        InlineKeyboardButton("April", callback_data="april"),
     ],
     [
         InlineKeyboardButton("1", callback_data='2024-04-01'),
@@ -69,7 +71,8 @@ days_keyboard = [
         InlineKeyboardButton("Select All", callback_data="select_all"),
     ],
     [
-        InlineKeyboardButton("Confirm", callback_data="confirm"),
+        InlineKeyboardButton("🧹 Clear", callback_data="clear"),
+        InlineKeyboardButton("✅ Confirm", callback_data="confirm"),
     ]
 ]
 
@@ -120,7 +123,7 @@ def command_start(update: Update, context: CallbackContext) -> None:
         text +
         f"\nSend your phone number ",
         reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton("Share your phone number",request_contact=True, )]],
+            [[KeyboardButton("Share your phone number", request_contact=True, )]],
             resize_keyboard=True,
         ))
 
@@ -131,6 +134,24 @@ def ramadan_days(update: Update, context: CallbackContext) -> int:
     contact = update.message.contact
     phone_number = contact.phone_number
     context.user_data["phone"] = phone_number
+
+    keyboard = [['Skip']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+    update.message.reply_text(
+        'Send your second phone number (Optional, you can skip this step).\n\n',
+        reply_markup=reply_markup
+    )
+
+    return PHONE2
+
+
+def phone_second(update: Update, context: CallbackContext) -> int:
+    text = update.message.text
+    if text == "Skip":
+        text = "Skipped"
+
+    context.user_data["phone2"] = text
 
     reply_markup = InlineKeyboardMarkup(days_keyboard)
 
@@ -144,7 +165,42 @@ def ramadan_days(update: Update, context: CallbackContext) -> int:
         reply_markup=reply_markup,
     )
 
+    return CHOOSE_ORDER_TYPE
+
+
+def choose_order_type(update: Update, context: CallbackContext) -> int:
+    order_type = update.message.text
+    if order_type == "Onsite":
+        order_type_text = "onsite"
+    elif order_type == "Take away":
+        order_type_text = "takeaway"
+    elif order_type == "Back":
+        reply_markup = InlineKeyboardMarkup(days_keyboard)
+        days_text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
+
+        update.message.reply_text(
+            'Which days you want to attend for Iftar ?\n\n',
+            reply_markup=ReplyKeyboardRemove()
+        )
+        update.message.reply_text(
+            '🗓 Selected days:\n\n' + days_text,
+            reply_markup=reply_markup,
+        )
+
+        return CHOOSE_ORDER_TYPE
+
+    context.user_data["order_type"] = order_type_text
+
+    keyboard = [['Cash', 'Card'], ['Back']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+    update.message.reply_text(
+        f'Choose your payment ?{context.user_data["order_type"]}\n\n',
+        reply_markup=reply_markup
+    )
+
     return CHOOSE_PAYMENT
+
 
 bank_account_details = """
 Bank Name: <strong>Keb Hana Bank(하나은행)</strong>
@@ -154,24 +210,25 @@ Account Number: <code>74891124393407</code>.
 Please send the screenshot of the payment you made through online banking.
 """
 
+
 def choose_payment(update: Update, context: CallbackContext) -> int:
     """Stores the photo and asks for a location."""
     text = update.message.text
     if text == "Cash":
         update.message.reply_text(
             f"""
-You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
-as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
-
-Connect with the admin for the payment:
-Name: Mukammadaliev Bekhzodbek
-Phone: +821039212299
-
-Please note: Bring exact cash to avoid the need for change or currency exchange.. ✨🌙
-""",
-)
+                You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
+                as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
+                
+                Connect with the admin for the payment:
+                Name: Mukammadaliev Bekhzodbek
+                Phone: +821039212299
+                
+                Please note: Bring exact cash to avoid the need for change or currency exchange.. ✨🌙
+                """,
+        )
         context.user_data["payment_type"] = "cash"
-        user_id = user_id = update.message.from_user.id
+        user_id = update.message.from_user.id
         save_data(user_id, context, image=False)
     elif text == "Card":
         update.message.reply_text(
@@ -183,20 +240,16 @@ Please note: Bring exact cash to avoid the need for change or currency exchange.
         return WAITING_FOR_IMAGE  # Return the new state to wait for the image
 
     elif text == "Back":
-        reply_markup = InlineKeyboardMarkup(days_keyboard)
-        days_text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
+
+        keyboard = [['Onsite', 'Take away'], ['Back']]
+        reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
         update.message.reply_text(
-            'Which days you want to attend for Iftar ?\n\n',
-            # reply_markup=reply_markup,
-            reply_markup=ReplyKeyboardRemove()
-        )
-        update.message.reply_text(
-            '🗓 Selected days:\n\n' + days_text,
-            reply_markup=reply_markup,
+            f'Choose your order type.',
+            reply_markup=reply_markup
         )
 
-        return CHOOSE_PAYMENT
+        return CHOOSE_ORDER_TYPE
 
     return ConversationHandler.END
 
@@ -205,17 +258,17 @@ def accept_check(update: Update, context: CallbackContext) -> int:
     file_id = update.message.photo[-1].file_id
     file_path = context.bot.get_file(file_id).file_path
     context.user_data["payment_check"] = file_path
-    
+
     user_id = update.message.from_user.id
     save_data(user_id, context, image=True)
-    
+
     if "days" in context.user_data and context.user_data["days"]:
         # Sort the days
         sorted_days = sorted(context.user_data["days"])
         # Convert each day into the desired format (without emojis for numbers, but you could add content emojis)
         formatted_days = [f"{datetime.strptime(day, '%Y-%m-%d').strftime('%d-%B')}" for day in sorted_days]
         # Organize the formatted days into three columns
-        columns = [" | ".join(formatted_days[i:i+3]) for i in range(0, len(formatted_days), 3)]
+        columns = [" | ".join(formatted_days[i:i + 3]) for i in range(0, len(formatted_days), 3)]
         selected_days = '\n'.join(columns)
     else:
         selected_days = "No days selected. Please ensure your selection was made correctly."
@@ -232,10 +285,12 @@ Status: Pending 🕒✨🌙✨🌙✨🌙
 
     return ConversationHandler.END
 
+
 def request_image_again(update: Update, context: CallbackContext) -> int:
     """Prompts the user to send an image if they send text instead."""
     update.message.reply_text("Please send a screenshot of the payment. We need an image to verify the transaction.")
     return WAITING_FOR_IMAGE
+
 
 def cancel(update: Update, context: CallbackContext) -> int:
     """Cancels and ends the conversation."""
@@ -262,9 +317,10 @@ def button_click(update: Update, context: CallbackContext) -> None:
         if not context.user_data["days"]:
             query.answer(text="You haven't chosen any days", show_alert=True)
         else:
-            days = len(context.user_data["days"])
+            user_id = query.from_user.id
+            days = get_unpaid_days(user_id, context.user_data["days"])
             summa = days * 7000
-            keyboard = [['Cash', 'Card'], ['Back']]
+            keyboard = [['Onsite', 'Take away'], ['Back']]
             reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
             query.message.reply_text(
@@ -272,7 +328,12 @@ def button_click(update: Update, context: CallbackContext) -> None:
                 reply_markup=reply_markup
             )
 
-            return CHOOSE_PAYMENT
+            query.message.reply_text(
+                f'Choose your order type.',
+                reply_markup=reply_markup
+            )
+
+            return CHOOSE_ORDER_TYPE
 
     elif selected_option == "select_all":
         all_days = ['2024-03-11', '2024-03-12', '2024-03-13', '2024-03-14', '2024-03-15',
@@ -281,11 +342,45 @@ def button_click(update: Update, context: CallbackContext) -> None:
                     '2024-03-26', '2024-03-27', '2024-03-28', '2024-03-29', '2024-03-30',
                     '2024-03-31', '2024-04-01', '2024-04-02', '2024-04-03', '2024-04-04',
                     '2024-04-05', '2024-04-06', '2024-04-07', '2024-04-08', '2024-04-09']
-        context.user_data["days"] = set(all_days)
-        query.answer(text="All days have been selected.")
+        if len(context.user_data["days"]) != 0:
+            context.user_data["days"] = set()
+        else:
+            context.user_data["days"] = set(all_days)
 
         text = "\n".join(numbers_in_emoji[day] for day in sorted(context.user_data["days"]))
         query.edit_message_text(text=f"{option_text}{text}", reply_markup=reply_markup)
+
+    elif selected_option == "march":
+        march_days = ['2024-03-11', '2024-03-12', '2024-03-13', '2024-03-14', '2024-03-15',
+                      '2024-03-16', '2024-03-17', '2024-03-18', '2024-03-19', '2024-03-20',
+                      '2024-03-21', '2024-03-22', '2024-03-23', '2024-03-24', '2024-03-25',
+                      '2024-03-26', '2024-03-27', '2024-03-28', '2024-03-29', '2024-03-30',
+                      '2024-03-31']
+        if len(context.user_data['days']) == 21:
+            query.answer(text="March days are selected.", show_alert=True)
+        else:
+            context.user_data["days"] = set(march_days)
+            text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
+            query.edit_message_text(text=f"{option_text}{text}", reply_markup=reply_markup)
+
+    elif selected_option == "april":
+        march_days = ['2024-04-01', '2024-04-02', '2024-04-03', '2024-04-04',
+                      '2024-04-05', '2024-04-06', '2024-04-07', '2024-04-08', '2024-04-09']
+
+        if len(context.user_data['days']) == 9:
+            query.answer(text="April days are selected.", show_alert=True)
+        else:
+            context.user_data["days"] = set(march_days)
+            text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
+            query.edit_message_text(text=f"{option_text}{text}", reply_markup=reply_markup)
+
+    elif selected_option == "clear":
+        if len(context.user_data["days"]) == 0:
+            query.answer(text="There are not selected days.", show_alert=True)
+        else:
+            context.user_data["days"] = set()
+
+        query.edit_message_text(text=f"Selected days are deleted", reply_markup=reply_markup)
 
     elif selected_option not in ["00", "confirm", "select_all"]:  # Handle day selections
         if selected_option in context.user_data["days"]:
@@ -300,14 +395,28 @@ def button_click(update: Update, context: CallbackContext) -> None:
 
         query.edit_message_text(text=f"{option_text}{text}", reply_markup=reply_markup)
 
+
+def get_unpaid_days(user_id, days):
+    print(user_id)
+    user = User.objects.get(user_id=user_id)
+    days_count = 0
+    for day in days:
+        count = Day.objects.filter(day=day, users=user).count()
+        if not count:
+            days_count += 1
+    return days_count
+
 def save_data(user_id, context: CallbackContext, image=False):
     user = User.objects.get(user_id=user_id)
     application = Application.objects.create(
         user=user,
         days=context.user_data["days"],
         phone=context.user_data["phone"],
+        phone2=context.user_data["phone2"],
+        order_type=context.user_data["order_type"],
         payment_type=context.user_data["payment_type"],
     )
+
     if image:
         file_url = context.user_data["payment_check"]
         response = requests.get(file_url)
@@ -322,4 +431,3 @@ def save_data(user_id, context: CallbackContext, image=False):
 
         # Save the model instance
         application.save()
-

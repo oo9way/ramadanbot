@@ -118,7 +118,7 @@ def command_start(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text(
         text +
-        f"\nSend your phone number",
+        f"\nSend your phone number ",
         reply_markup=ReplyKeyboardMarkup(
             [[KeyboardButton("Share your phone number",request_contact=True, )]],
             resize_keyboard=True,
@@ -140,7 +140,7 @@ def ramadan_days(update: Update, context: CallbackContext) -> int:
         reply_markup=ReplyKeyboardRemove()
     )
     update.message.reply_text(
-        'Select days\n\n',
+        '🗓 Select days\n\n',
         reply_markup=reply_markup,
     )
 
@@ -167,7 +167,7 @@ Connect with the admin for the payment:
 Name: Mukammadaliev Bekhzodbek
 Phone: +821039212299
 
-Please note: Bring exact cash to avoid the need for change or currency exchange.. 
+Please note: Bring exact cash to avoid the need for change or currency exchange.. ✨🌙
 """,
 )
         context.user_data["payment_type"] = "cash"
@@ -192,7 +192,7 @@ Please note: Bring exact cash to avoid the need for change or currency exchange.
             reply_markup=ReplyKeyboardRemove()
         )
         update.message.reply_text(
-            'Selected days:\n\n' + days_text,
+            '🗓 Selected days:\n\n' + days_text,
             reply_markup=reply_markup,
         )
 
@@ -226,7 +226,7 @@ Your request has been received. Thank you {update.message.from_user.first_name}!
 Here are the days you've chosen: 
 {selected_days}
 
-Status: Pending 🕒
+Status: Pending 🕒✨🌙✨🌙✨🌙
 """,
     )
 

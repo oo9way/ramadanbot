@@ -37,6 +37,8 @@ class User(CreateUpdateTracker):
     @classmethod
     def get_user_and_created(cls, update: Update, context: CallbackContext) -> Tuple[User, bool]:
         """ python-telegram-bot's Update, Context --> User instance """
+        if update.effective_user is None:
+            raise ValueError("update.effective_user is None")
         data = extract_user_data_from_update(update)
         u, created = cls.objects.update_or_create(user_id=data["user_id"], defaults=data)
 

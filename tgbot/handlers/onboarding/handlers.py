@@ -117,7 +117,8 @@ def command_start(update: Update, context: CallbackContext) -> None:
         text +
         f"\nSend your phone number",
         reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton("Share your phone number", request_contact=True)]]
+            [[KeyboardButton("Share your phone number",request_contact=True)]],
+            resize_keyboard=True,
         ))
 
     return RAMADANDAYS
@@ -136,18 +137,11 @@ def ramadan_days(update: Update, context: CallbackContext) -> int:
         reply_markup=ReplyKeyboardRemove()
     )
     update.message.reply_text(
-        'Select days ?\n\n',
+        'Select days\n\n',
         reply_markup=reply_markup,
     )
 
     return CHOOSE_PAYMENT
-
-def escape_markdown_v2(text):
-    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-    for char in escape_chars:
-        if char in text:
-            text = text.replace(char, "\\" + char)
-    return text
 
 bank_account_details = """
 Bank Name: <strong>Keb Hana Bank(하나은행)</strong>
@@ -156,15 +150,23 @@ Account Number: <code>74891124393407</code>.
 
 Please send the screenshot of the payment you made through online banking.
 """
-bank_details = escape_markdown_v2(bank_account_details)
 
 def choose_payment(update: Update, context: CallbackContext) -> int:
     """Stores the photo and asks for a location."""
     text = update.message.text
     if text == "Cash":
         update.message.reply_text(
-            f'You have selected to pay cash, you can give cash to our admins listed on bot info ).',
-        )
+            f"""
+You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
+as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
+
+Connect with the admin for the payment:
+Name: Mukammadaliev Bekhzodbek
+Phone: +821039212299
+
+Please note: Bring exact cash to avoid the need for change or currency exchange.. 
+""",
+)
         context.user_data["payment_type"] = "cash"
         user_id = user_id = update.message.from_user.id
         save_data(user_id, context, image=False)

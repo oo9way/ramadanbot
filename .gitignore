@@ -135,4 +135,5 @@ dmypy.json
 .idea/
 
 #Docker
-.Dockerfile.swp
+.Dockerfile.
+*/staticfiles

@@ -5,6 +5,8 @@ from telegram import Update
 
 def extract_user_data_from_update(update: Update) -> Dict:
     """ python-telegram-bot's Update instance --> User info """
+    if update.effective_user is None:
+        return {}
     user = update.effective_user.to_dict()
 
     return dict(

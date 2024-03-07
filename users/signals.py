@@ -21,7 +21,11 @@ def check_field_on_save(sender, instance, created, **kwargs):
                     print(e)
 
         elif not instance.is_approved:
-            days = set(x.strip() for x in instance.days.replace("}", "").replace("{", "").replace("'", "").split(","))
+            try:
+                days = set(x.strip() for x in instance.days.replace("}", "").replace("{", "").replace("'", "").split(","))
+            except:
+                days = set(instance.days)
+
             for date in days:
                 try:
                     parsed_date = datetime.strptime(date, '%Y-%m-%d').date()

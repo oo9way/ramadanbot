@@ -1,4 +1,4 @@
-start_created = "Assalamu alaykum, {first_name}. \nWelcome to the Inha Masjid Ramadan Bot!✨🌙"
+start_created = "Assalamu alaykum, {first_name}. \nWelcome to the Inha Masjid Bot!✨🌙"
 start_not_created = "Assalamu alaykum, {first_name}.✨🌙 \nIt's a delightful to have you back."
 unlock_secret_room = "Congratulations! You've opened a secret room👁‍🗨. There is some information for you:\n" \
            "<b>Users</b>: {user_count}\n" \

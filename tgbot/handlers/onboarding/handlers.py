@@ -179,7 +179,7 @@ def choose_order_type(update: Update, context: CallbackContext) -> int:
         days_text = "\n".join(numbers_in_emoji[x] for x in sorted(context.user_data["days"]))
 
         update.message.reply_text(
-            'Which days you want to attend for Iftar ?\n\n',
+            'Which days you want to attend for Iftar?\n\n',
             reply_markup=ReplyKeyboardRemove()
         )
         update.message.reply_text(
@@ -195,7 +195,7 @@ def choose_order_type(update: Update, context: CallbackContext) -> int:
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
     update.message.reply_text(
-        f'Choose your payment ?{context.user_data["order_type"]}\n\n',
+        f'Choose your payment for {context.user_data["order_type"]} order!\n\n',
         reply_markup=reply_markup
     )
 
@@ -216,23 +216,24 @@ def choose_payment(update: Update, context: CallbackContext) -> int:
     text = update.message.text
     if text == "Cash":
         update.message.reply_text(
-            f"""
-                You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
-                as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
-                
-                Connect with the admin for the payment:
-                Name: Mukammadaliev Bekhzodbek
-                Phone: +821039212299
-                
-                Please note: Bring exact cash to avoid the need for change or currency exchange.. ✨🌙
-                """,
+f"""
+You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
+as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
+
+Connect with the admin for the payment:
+Name: Mukammadaliev Bekhzodbek
+Phone: +821039212299
+Telegram: @behzcd
+
+Please note: Bring exact cash to avoid the need for change or currency exchange.. ✨🌙
+""",
         )
         context.user_data["payment_type"] = "cash"
         user_id = update.message.from_user.id
         save_data(user_id, context, image=False)
     elif text == "Card":
         update.message.reply_text(
-            "Please send a screenshot of your payment. Ensure it is clear and shows the necessary transaction details.",
+            bank_account_details,
             parse_mode='HTML',
             disable_web_page_preview=True
         )
@@ -428,6 +429,54 @@ def save_data(user_id, context: CallbackContext, image=False):
         with open('image.jpg', 'rb') as f:
             # Assign the image file to the model's image field
             application.payment_check.save(f'{user}_payment_check.png', File(f))
-
+        application.payment_check_url = file_url
         # Save the model instance
         application.save()
+
+from telegram import Update
+from telegram.ext import CallbackContext
+
+def command_info(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /info is issued."""
+    instructions = (
+        "🌙 *How to Book Your Iftar*\n\n"
+
+        "*1. Select Your Dates*\n"
+        "- *Start Here:* Navigate to our calendar feature.\n"
+        "- *Choose Your Days:* Select the days you wish to join us for iftar during Ramadan. "
+        "Our system allows for multiple selections, enabling you to plan for the entire month with ease.\n\n"
+
+        "*2. Complete Your Payment*\n"
+        "- *Proceed to Payment:* After selecting your dates, you will be redirected to our payment page.\n"
+        "- *Select Payment Method:* Choose a convenient payment method. Your contributions are vital as they "
+        "support the quality and preparation of our iftars.\n\n"
+
+        "*3. Receive Your Confirmation*\n"
+        "- *Confirmation:* You will receive a confirmation for your booked dates upon completing the payment.\n"
+        "- *Keep Your Confirmation Safe:* It's important to save or print your confirmation. It may be required "
+        "upon your arrival.\n\n"
+
+        "🆘 *Need Assistance?*\n"
+        "Should you encounter any issues or have questions about the booking process, we are here to help.\n"
+        "- *Contact Us:* For assistance, please reach out to us at @behzcd. Our aim is to make "
+        "your iftar experience exceptional.\n\n"
+
+        "*Thank You*\n"
+        "We are grateful for your choice to break your fast with us. May this Ramadan bring peace, health, and "
+        "spiritual growth to you and your loved ones."
+    )
+    update.message.reply_text(instructions, parse_mode='Markdown')
+
+def command_prayertimes(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /prayertimes is issued."""
+    # Example static prayer times; you may want to calculate these dynamically based on the user's location
+    prayer_times = (
+        "🕌 <b>Prayer Times</b>\n\n"
+        "- Fajr: 6:10 AM\n"
+        "- Dhuhr: 13:15 PM\n"
+        "- Asr: 5:00 PM\n"
+        "- Maghrib: 6:40 PM\n"
+        "- Isha: 8:20 PM\n\n"
+        "Please note these times are for Inha Masjid."
+    )
+    update.message.reply_text(prayer_times, parse_mode='HTML')

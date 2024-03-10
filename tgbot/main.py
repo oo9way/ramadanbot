@@ -6,7 +6,7 @@ from telegram import Bot
 
 from dtb.settings import TELEGRAM_TOKEN
 
-
+TELEGRAM_TOKEN = "6432845948:AAHqwCgoO-J7fWkOO3E7fDHoqCdeE5I6wXI"
 bot = Bot(TELEGRAM_TOKEN)
 TELEGRAM_BOT_USERNAME = bot.get_me()["username"]
 # Global variable - the best way I found to init Telegram bot

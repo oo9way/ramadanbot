@@ -137,3 +137,5 @@ dmypy.json
 #Docker
 .Dockerfile.
 */staticfiles
+staticfiles
+media/

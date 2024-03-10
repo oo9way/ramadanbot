@@ -9,7 +9,7 @@ from telegram.ext import (
 
 from dtb.settings import DEBUG
 from tgbot.handlers.onboarding.handlers import CHOOSE_PAYMENT, ACCEPT_CHECK, RAMADANDAYS, button_click, \
-    WAITING_FOR_IMAGE, request_image_again, accept_check, CHOOSE_ORDER_TYPE, PHONE2
+    WAITING_FOR_IMAGE, request_image_again, accept_check, CHOOSE_ORDER_TYPE, PHONE2, command_info,command_prayertimes
 
 from tgbot.handlers.utils import error
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
@@ -40,6 +40,8 @@ def setup_dispatcher(dp):
     ))
 
     dp.add_handler(CallbackQueryHandler(button_click))
+    dp.add_handler(CommandHandler('info', command_info))
+    dp.add_handler(CommandHandler('prayertimes', command_prayertimes))
 
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
     return dp

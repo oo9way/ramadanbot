@@ -108,11 +108,24 @@ class Day(models.Model):
     day = models.DateField(unique_for_date=True)
     users = models.ManyToManyField(User)
 
-    @property
-    def get_count(self):
-        return self.users.count()
+    def get_onsite_users(self):
+        apps = Application.objects.filter(is_approved=True, days__icontains=self.day, order_type="onsite")
+        return ', '.join(f"{app.user.first_name} - {app.order_type}" for app in apps)
 
+    get_onsite_users.short_description = "Users for onsite"
 
-    @property
-    def get_users(self):
-        return ', '.join(user.first_name for user in self.users.all())
+    def get_takeaway_users(self):
+        apps = Application.objects.filter(is_approved=True, days__icontains=self.day, order_type="takeaway")
+        return ', '.join(f"{app.user.first_name} - {app.order_type}" for app in apps)
+
+    get_takeaway_users.short_description = "Users for take away"
+
+    def get_onsite_users_count(self):
+        return Application.objects.filter(order_type="onsite", is_approved=True, days__icontains=self.day).count()
+
+    get_onsite_users_count.short_description = "Total onsite"
+
+    def get_takeaway_users_count(self):
+        return Application.objects.filter(order_type="takeaway", is_approved=True, days__icontains=self.day).count()
+
+    get_takeaway_users_count.short_description = "Total take away"

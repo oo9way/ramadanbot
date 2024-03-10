@@ -51,23 +51,31 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ("user", "phone", "get_days_count", "payment_type", "is_approved", "show_payment_check_url", "created_at", )
+    list_display = (
+    "user", "phone", "get_days_count", "payment_type", "is_approved", "show_payment_check_url", "created_at",)
     list_display_links = ("user",)
     list_filter = ("payment_type",)
     search_fields = ("user",)
-    ordering = ("is_approved", )
-    readonly_fields = ("user", "phone", "payment_type", "payment_check_url", "days", "phone2", "order_type", )
-    
+    ordering = ("is_approved",)
+    readonly_fields = ("user", "phone", "payment_type", "payment_check_url", "days", "phone2", "order_type",)
+
     def show_payment_check_url(self, obj):
         if obj.payment_check_url:
             return format_html(f'<a href="{obj.payment_check_url}" target="_blank">Check Photo</a>')
         else:
             return "No photo"
 
+
 @admin.register(Day)
 class DayAdmin(admin.ModelAdmin):
-    list_display = ("day", "get_count", "get_users")
-    ordering = ("day", )
+    list_display = ("day", "get_onsite_users_count", "get_takeaway_users_count")
+    ordering = ("day",)
+
+    fieldsets = (
+        ('Details', {
+            'fields': ('day', 'get_onsite_users', 'get_takeaway_users',),
+        }),
+    )
 
     def has_add_permission(self, request):
         return False

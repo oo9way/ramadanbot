@@ -472,11 +472,11 @@ def command_prayertimes(update: Update, context: CallbackContext) -> None:
     # Example static prayer times; you may want to calculate these dynamically based on the user's location
     prayer_times = (
         "🕌 <b>Prayer Times</b>\n\n"
-        "- Fajr: 6:10 AM\n"
+        "- Fajr: 5:45 AM\n"
         "- Dhuhr: 13:15 PM\n"
         "- Asr: 5:00 PM\n"
-        "- Maghrib: 6:40 PM\n"
-        "- Isha: 8:20 PM\n\n"
+        "- Maghrib: +5 min after inter\n"
+        "- Isha: 8:30 PM\n\n"
         "Please note these times are for Inha Masjid."
     )
     update.message.reply_text(prayer_times, parse_mode='HTML')

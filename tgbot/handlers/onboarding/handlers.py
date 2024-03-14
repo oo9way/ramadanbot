@@ -1,8 +1,11 @@
 import os
+import re
+from typing import Any
+
 import requests
 from django.core.files import File
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, InlineKeyboardButton, \
-    InlineKeyboardMarkup
+    InlineKeyboardMarkup, Message
 from telegram.ext import CallbackContext, ConversationHandler
 
 from tgbot.handlers.onboarding import static_text
@@ -216,7 +219,7 @@ def choose_payment(update: Update, context: CallbackContext) -> int:
     text = update.message.text
     if text == "Cash":
         update.message.reply_text(
-f"""
+            f"""
 You've chosen to make a cash payment. Kindly ensure the payment is completed by 2:00 PM, 
 as the Iftar arrangements will be prepared based on the number of people who have paid by that time.
 
@@ -304,7 +307,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-def button_click(update: Update, context: CallbackContext) -> None:
+def button_click(update: Update, context: CallbackContext) -> Message | Any:
     query = update.callback_query
     option_text = "✅ Selected days\n\n"
     selected_option = query.data
@@ -313,6 +316,23 @@ def button_click(update: Update, context: CallbackContext) -> None:
     # Initialize "days" as a set if not already done
     if "days" not in context.user_data:
         context.user_data["days"] = set()
+
+    pattern = r'confirm-\d+'
+
+    # Search for the pattern in the text
+    confirm = re.search(pattern, selected_option)
+
+    if confirm:
+        order_id = selected_option.split("-")[1]
+        try:
+            application = Application.objects.get(id=order_id)
+            application.is_approved = True
+            application.save()
+            query.delete_message()
+            return query.message.reply_text(text="Application has been approved successfully")
+
+        except Application.DoesNotExist:
+            return query.answer(text="Application not found.", show_alert=True)
 
     if selected_option == "confirm":
         if not context.user_data["days"]:
@@ -407,6 +427,7 @@ def get_unpaid_days(user_id, days):
             days_count += 1
     return days_count
 
+
 def save_data(user_id, context: CallbackContext, image=False):
     user = User.objects.get(user_id=user_id)
     application = Application.objects.create(
@@ -433,8 +454,6 @@ def save_data(user_id, context: CallbackContext, image=False):
         # Save the model instance
         application.save()
 
-from telegram import Update
-from telegram.ext import CallbackContext
 
 def command_info(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /info is issued."""
@@ -466,6 +485,7 @@ def command_info(update: Update, context: CallbackContext) -> None:
         "spiritual growth to you and your loved ones."
     )
     update.message.reply_text(instructions, parse_mode='Markdown')
+
 
 def command_prayertimes(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /prayertimes is issued."""

@@ -95,6 +95,7 @@ class Application(models.Model):
     order_type = models.CharField(max_length=255, choices=ORDER_TYPE_CHOICES, default="onsite")
     payment_check = models.ImageField(null=True, blank=True)
     payment_check_url = models.URLField(null=True, blank=True)
+    _sent_to_admin = models.BooleanField(default=False, editable=False)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
